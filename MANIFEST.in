@@ -1,2 +1,2 @@
-include cbpi4-BM_Steps/config.yaml
-recursive-include cbpi4-BM_Steps/static *
+include cbpi4-Sparge_Steps/config.yaml
+recursive-include cbpi4-Sparge_Steps/static *
