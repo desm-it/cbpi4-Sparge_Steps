@@ -21,17 +21,18 @@ import warnings
 
 
 @parameters([Property.Number(label="Temp", configurable=True),
-             Property.Sensor(label="Sensor"),
-             Property.Actor(label="Heater"),
+             Property.Actor(label="Actor"),
              Property.Kettle(label="Kettle")])
 
 class TempStep(CBPiStep):
 
     @action("Stop heating", [])
     async def stop_heating(self):
+        self.kettle=self.get_kettle(self.props.get("Kettle", None))
+        self.Actor=self.props.get("Actor", None)
         self.kettle.target_temp = int(0)
         await self.setAutoMode(False)
-        await self.actor_off(self.props.Actor)
+        await self.actor_off(self.Actor)
         self.cbpi.notify(self.name, 'Sparge Heating stopped', NotificationType.INFO)
         await self.push_update()
 
@@ -49,9 +50,16 @@ class TempStep(CBPiStep):
         self.timer.start()
 
         self.port = str(self.cbpi.static_config.get('port',8000))
-        self.kettle=self.get_kettle(self.props.Kettle)
-        await self.actor_off(self.props.Actor)
-        self.kettle.target_temp = int(self.props.get("Temp", 0))
+
+        self.kettle=self.get_kettle(self.props.get("Kettle", None))
+        if self.kettle is not None:
+            self.kettle.target_temp = int(self.props.get("Temp", 0))
+        else:
+            logging.error("Error, no kettle {}".format(e))
+
+        self.Actor=self.props.get("Actor", None)
+        if self.Actor is not None and self.kettle.target_temp == int(0):
+            await self.actor_off(self.Actor)
 
         if self.kettle.target_temp == int(0):
             await self.setAutoMode(False)
