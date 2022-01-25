@@ -7,7 +7,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='cbpi4-Sparge_Steps',
-      version='0.0.2',
+      version='0.0.3',
       description='CraftBeerPi4 Sparge Step Plugin',
       author='Joel de Smit',
       author_email='cbpi@joeldesmit.nl',

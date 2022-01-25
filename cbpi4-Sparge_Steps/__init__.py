@@ -97,6 +97,7 @@ class TempStep(CBPiStep):
 
 class SpargeStep(CBPiStep):
 
+    @action("Stop heating", [])
     async def stop_heating(self):
         self.kettle=self.get_kettle(self.props.get("Sparge-Kettle", None))
         self.actor=self.props.get("Sparge-Heater", None)
@@ -107,10 +108,11 @@ class SpargeStep(CBPiStep):
         await self.push_update()
 
     async def NextStep(self, **kwargs):
+        self.summary = ""
         await self.next()
 
     async def on_timer_done(self,timer):
-        self.summary = "Take malt out and click Sparge"
+        self.summary = "Take malt out and Sparge"
         self.cbpi.notify(self.name, "Mashing done. Take malt out and begin sparging. When done, press Next to start boil.", NotificationType.INFO, action=[NotificationAction("Next", self.NextStep)])
         await self.push_update()
 
@@ -121,7 +123,7 @@ class SpargeStep(CBPiStep):
     async def on_start(self):
         if self.timer is None:
             self.timer = Timer(1 ,on_update=self.on_timer_update, on_done=self.on_timer_done)
-        await self.push_update()
+        self.timer.start()
 
         self.kettle=self.get_kettle(self.props.get("Sparge-Kettle", None))
         self.actor=self.props.get("Sparge-Heater", None)
@@ -144,10 +146,6 @@ class SpargeStep(CBPiStep):
     async def run(self):
         while self.running == True:
             await asyncio.sleep(1)
-            if self.timer.is_running is not True:
-                self.timer.start()
-                self.timer.is_running = True
-
         return StepResult.DONE
 
     async def setAutoMode(self, auto_state):

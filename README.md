@@ -21,6 +21,11 @@ Still under development and in Beta test phase
 
 ###Changelog:
 
+** 0.0.3
+
+- Some bugfixes
+
+
 ** 0.0.2
 
 - SpargeStep now doesn't wait for user to confirm starting the sparging process to disable the heater
