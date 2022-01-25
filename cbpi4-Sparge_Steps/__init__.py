@@ -20,19 +20,19 @@ import requests
 import warnings
 
 
-@parameters([Property.Number(label="Temp", configurable=True),
-             Property.Actor(label="Actor"),
-             Property.Kettle(label="Kettle")])
+@parameters([Property.Number(label="Temp", description="Target temp to be set", configurable=True),
+             Property.Actor(label="Actor", description="Select heating element"),
+             Property.Kettle(label="Kettle", description="Kettle to heat up")])
 
 class TempStep(CBPiStep):
 
     @action("Stop heating", [])
     async def stop_heating(self):
         self.kettle=self.get_kettle(self.props.get("Kettle", None))
-        self.Actor=self.props.get("Actor", None)
+        self.actor=self.props.get("Actor", None)
         self.kettle.target_temp = int(0)
         await self.setAutoMode(False)
-        await self.actor_off(self.Actor)
+        await self.actor_off(self.actor)
         self.cbpi.notify(self.name, 'Sparge Heating stopped', NotificationType.INFO)
         await self.push_update()
 
@@ -49,21 +49,16 @@ class TempStep(CBPiStep):
             self.timer = Timer(1, on_update=self.on_timer_update, on_done=self.on_timer_done)
         self.timer.start()
 
-        self.port = str(self.cbpi.static_config.get('port',8000))
-
         self.kettle=self.get_kettle(self.props.get("Kettle", None))
         if self.kettle is not None:
             self.kettle.target_temp = int(self.props.get("Temp", 0))
-        else:
-            logging.error("Error, no kettle {}".format(e))
 
-        self.Actor=self.props.get("Actor", None)
-        if self.Actor is not None and self.kettle.target_temp == int(0):
-            await self.actor_off(self.Actor)
-
+        self.actor=self.props.get("Actor", None)
+        
         if self.kettle.target_temp == int(0):
             await self.setAutoMode(False)
-            await self.actor_off(self.props.Actor)
+            if self.actor is not None:
+                await self.actor_off(self.actor)
         else:
             await self.setAutoMode(True)
 
@@ -97,12 +92,40 @@ class TempStep(CBPiStep):
 
 
 
-@parameters([Property.Actor(label="Sparge-Heater"),
-             Property.Kettle(label="Sparge-Kettle")])
+@parameters([Property.Actor(label="Sparge-Heater", description="(optional) Select heating element used for sparge water"),
+             Property.Kettle(label="Sparge-Kettle", description="(optional) Select kettle used for sparge water heating")])
 
 class SpargeStep(CBPiStep):
 
-    async def SpargeStep(self, **kwargs):
+    async def stop_heating(self):
+        self.kettle=self.get_kettle(self.props.get("Sparge-Kettle", None))
+        self.actor=self.props.get("Sparge-Heater", None)
+        self.kettle.target_temp = int(0)
+        await self.setAutoMode(False)
+        await self.actor_off(self.actor)
+        self.cbpi.notify(self.name, 'Sparge Heating stopped', NotificationType.INFO)
+        await self.push_update()
+
+    async def NextStep(self, **kwargs):
+        await self.next()
+
+    async def on_timer_done(self,timer):
+        self.summary = "Take malt out and click Sparge"
+        self.cbpi.notify(self.name, "Mashing done. Take malt out and begin sparging. When done, press Next to start boil.", NotificationType.INFO, action=[NotificationAction("Next", self.NextStep)])
+        await self.push_update()
+
+    async def on_timer_update(self, timer, seconds):
+        self.summary = Timer.format_time(seconds)
+        await self.push_update()
+
+    async def on_start(self):
+        if self.timer is None:
+            self.timer = Timer(1 ,on_update=self.on_timer_update, on_done=self.on_timer_done)
+        await self.push_update()
+
+        self.kettle=self.get_kettle(self.props.get("Sparge-Kettle", None))
+        self.actor=self.props.get("Sparge-Heater", None)
+
         self.summary = "Sparging"
         if self.kettle is not None:
             self.kettle.target_temp = int(0)
@@ -111,31 +134,6 @@ class SpargeStep(CBPiStep):
         if self.actor is not None:
             await self.actor_off(self.actor)
 
-        await self.push_update()
-
-        self.cbpi.notify(self.name, "Sparging in progress. When done, press Next to start boil.", NotificationType.INFO, action=[NotificationAction("Next step", self.NextStep)])
-        await self.push_update()
-
-    async def NextStep(self, **kwargs):
-        await self.next()
-
-    async def on_timer_done(self,timer):
-        self.summary = "Take malt out and click Sparge"
-
-        self.cbpi.notify(self.name, "Mashing done. Take malt out and click Begin Sparging. (System will stop Sparge heater and will ask when you are done)", NotificationType.INFO, action=[NotificationAction("Begin Sparging", self.SpargeStep)])
-        await self.push_update()
-
-    async def on_timer_update(self,timer, seconds):
-        await self.push_update()
-
-    async def on_start(self):
-        self.summary=""
-
-        self.kettle=self.get_kettle(self.props.get("Sparge-Kettle", None))
-        self.actor=self.props.get("Sparge-Heater", None)
-
-        if self.timer is None:
-            self.timer = Timer(1 ,on_update=self.on_timer_update, on_done=self.on_timer_done)
         await self.push_update()
 
     async def on_stop(self):

@@ -7,7 +7,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='cbpi4-Sparge_Steps',
-      version='0.0.1',
+      version='0.0.2',
       description='CraftBeerPi4 Sparge Step Plugin',
       author='Joel de Smit',
       author_email='cbpi@joeldesmit.nl',
@@ -17,7 +17,7 @@ setup(name='cbpi4-Sparge_Steps',
       package_data={
         # If any package contains *.txt or *.rst files, include them:
       '': ['*.txt', '*.rst', '*.yaml'],
-      'cbpi4-BM_Steps': ['*','*.txt', '*.rst', '*.yaml']},
+      'cbpi4-Sparge_Steps': ['*','*.txt', '*.rst', '*.yaml']},
       packages=['cbpi4-Sparge_Steps'],
       install_requires=[
 	'cbpi>=4.0.0.33',

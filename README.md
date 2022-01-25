@@ -20,7 +20,14 @@ Still under development and in Beta test phase
 		- Kettle: (optional) Sets kettle target temp to 0 and turns off auto mode
 
 ###Changelog:
-	
+
+** 0.0.2
+
+- SpargeStep now doesn't wait for user to confirm starting the sparging process to disable the heater
+	If cbpi was not open, notification would not be displayed and heater would be left on.
+	Now it always disables the heater for safety. Add a few degrees to negate the extra cooling of the sparge water
+
+
 ** Initial release
 
 Initial change to sparge specific brew steps
