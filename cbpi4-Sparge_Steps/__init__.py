@@ -77,15 +77,10 @@ class TempStep(CBPiStep):
     async def setAutoMode(self, auto_state):
         try:
             if (self.kettle.instance is None or self.kettle.instance.state == False) and (auto_state is True):
-                url="http://127.0.0.1:" + self.port + "/kettle/"+ self.kettle.id+"/toggle"
-                async with aiohttp.ClientSession() as session:
-                    async with session.post(url) as response:
-                        return await response.text()
-                        await self.push_update()
+                await self.cbpi.kettle.toggle(self.kettle.id)
             elif (self.kettle.instance.state == True) and (auto_state is False):
-
-                await self.kettle.instance.stop()
-                await self.push_update()
+                await self.cbpi.kettle.stop(self.kettle.id)
+            await self.push_update()
 
         except Exception as e:
             logging.error("Failed to switch on KettleLogic {} {}".format(self.kettle.id, e))
@@ -152,15 +147,10 @@ class SpargeStep(CBPiStep):
     async def setAutoMode(self, auto_state):
         try:
             if (self.kettle.instance is None or self.kettle.instance.state == False) and (auto_state is True):
-                url="http://127.0.0.1:" + self.port + "/kettle/"+ self.kettle.id+"/toggle"
-                async with aiohttp.ClientSession() as session:
-                    async with session.post(url) as response:
-                        return await response.text()
-                        await self.push_update()
+                await self.cbpi.kettle.toggle(self.kettle.id)
             elif (self.kettle.instance.state == True) and (auto_state is False):
-
-                await self.kettle.instance.stop()
-                await self.push_update()
+                await self.cbpi.kettle.stop(self.kettle.id)
+            await self.push_update()
 
         except Exception as e:
             logging.error("Failed to switch on KettleLogic {} {}".format(self.kettle.id, e))
