@@ -1,22 +1,24 @@
-
 import asyncio
 import aiohttp
 from aiohttp import web
-from cbpi.api.step import CBPiStep, StepResult
-from cbpi.api.dataclasses import Kettle, Props
+from cbpi.api import parameters, Property, action
+from cbpi.api.step import StepResult, CBPiStep
+from cbpi.api.timer import Timer
 from datetime import datetime
 import time
+from voluptuous.schema_builder import message
+from cbpi.api.dataclasses import NotificationAction, NotificationType
+from cbpi.api.dataclasses import Kettle, Props
 from cbpi.api import *
 import logging
 from socket import timeout
 from typing import KeysView
 from cbpi.api.config import ConfigType
 from cbpi.api.base import CBPiBase
-from voluptuous.schema_builder import message
-from cbpi.api.dataclasses import NotificationAction, NotificationType
 import numpy as np
 import requests
 import warnings
+
 
 @parameters([Property.Number(label="Temp", configurable=True),
              Property.Sensor(label="Sensor"),
