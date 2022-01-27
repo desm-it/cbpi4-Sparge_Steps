@@ -19,7 +19,20 @@ Still under development and in Beta test phase
 		- Heater: (optional) Stops heater on this step
 		- Kettle: (optional) Sets kettle target temp to 0 and turns off auto mode
 
-###Changelog:
+### Installation
+
+pip3 install https://github.com/desm-it/cbpi4-Sparge_Steps/archive/main.zip
+cbpi add cbpi4-Sparge_Steps
+
+### Update
+
+pip3 install --upgrade https://github.com/desm-it/cbpi4-Sparge_Steps/archive/main.zip
+
+### Uninstallation
+cbpi remove cbpi4-Sparge_Steps
+pip3 uninstall cbpi4-Sparge_Steps
+
+### Changelog:
 
 ** 0.0.3
 
