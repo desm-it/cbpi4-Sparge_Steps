@@ -21,16 +21,16 @@ Still under development and in Beta test phase
 
 ### Installation
 
-pip3 install https://github.com/desm-it/cbpi4-Sparge_Steps/archive/main.zip
-cbpi add cbpi4-Sparge_Steps
+- pip3 install https://github.com/desm-it/cbpi4-Sparge_Steps/archive/main.zip
+- cbpi add cbpi4-Sparge_Steps
 
 ### Update
 
-pip3 install --upgrade https://github.com/desm-it/cbpi4-Sparge_Steps/archive/main.zip
+- pip3 install --upgrade https://github.com/desm-it/cbpi4-Sparge_Steps/archive/main.zip
 
 ### Uninstallation
-cbpi remove cbpi4-Sparge_Steps
-pip3 uninstall cbpi4-Sparge_Steps
+- cbpi remove cbpi4-Sparge_Steps
+- pip3 uninstall cbpi4-Sparge_Steps
 
 ### Changelog:
 
